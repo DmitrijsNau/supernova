@@ -1,0 +1,4 @@
+-c requirements.in
+black
+flake8
+isort

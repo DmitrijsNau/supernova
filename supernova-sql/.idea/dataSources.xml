@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="supernova@db-supernova-league-tracker-do-user-19049042-0.h.db.ondigitalocean.com" uuid="68fb0d34-e396-417a-a68e-13adf46f6274">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://db-supernova-league-tracker-do-user-19049042-0.h.db.ondigitalocean.com:25060/supernova</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>
