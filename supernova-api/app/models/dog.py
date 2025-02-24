@@ -15,10 +15,3 @@ class DogModel(BaseModel):
     people: bool
     dogs: bool
     is_virtual: bool
-
-
-class HandlerModel(BaseModel):
-    handler_id: str
-    league_number: int
-    handler_name: str
-    handler_email: str

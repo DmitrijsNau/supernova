@@ -4,7 +4,7 @@ from fastapi import Depends
 
 import app.core.database as db
 from app.core.query_parser import TableValueConstructor
-from app.models.user import UserProfileModel, UserSettingModel
+from app.models.handler import UserProfileModel, UserSettingModel
 
 
 class UserRepository:

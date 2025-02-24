@@ -6,7 +6,7 @@ from fastapi import Depends
 import app.core.database as db
 from app.core.query_parser import QueryParser
 from app.repositories.user import UserRepositoryDep
-from app.models.user import UserRoleModel, UserSettingModel
+from app.models.handler import HandlerModel
 
 query_parser = QueryParser(
     {
@@ -25,7 +25,7 @@ query_parser = QueryParser(
 )
 
 
-class UserService:
+class HandlerService:
     def __init__(
         self,
         repository: UserRepositoryDep,
@@ -109,4 +109,4 @@ class UserService:
             return self.repo.post_user_setting(self.conn, u)
 
 
-UserServiceDep = Annotated[UserService, Depends()]
+HandlerServiceDep = Annotated[HandlerService, Depends()]

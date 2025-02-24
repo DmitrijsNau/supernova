@@ -87,9 +87,10 @@ class LConnection:
                 continue
         try:
             yield conn
-        except:
+        except Exception as e:
             if conn.in_transaction():
                 conn.rollback()
+            raise e
         finally:
             conn.close()
 
