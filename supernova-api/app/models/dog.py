@@ -2,16 +2,17 @@ from pydantic import BaseModel
 
 
 class DogModel(BaseModel):
-    league_number: int
-    dog_name: str
-    main_handler_id: str
-    alternate_handler_id: str
-    call_name: str
-    breed: str
-    height: float
-    jump_height: int
-    current_level_type_id: str
-    is_reactive: bool
-    people: bool
-    dogs: bool
-    is_virtual: bool
+    league_number: int | None
+    dog_name: str | None
+    main_handler_id: str | None
+    alternate_handler_id: str | None
+    call_name: str | None
+    breed: str | None
+    height: float | None
+    jump_height: int | None
+    current_level_type_id: str | None
+    is_reactive: bool | None
+    people: bool | None
+    dogs: bool | None
+    is_virtual: bool | None
+    is_dog_active: bool | None

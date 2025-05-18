@@ -4,17 +4,22 @@ from fastapi import Depends
 
 import app.core.database as db
 from app.core.query_parser import TableValueConstructor
-from app.models.handler import UserProfileModel, UserSettingModel
+from app.models.handler import HandlerModel
 
 
-class UserRepository:
+class HandlerRepository:
     def __init__(self):
         pass
 
-    def get_role(self, conn, filter_query, filter_params, single):
+    def get_handler(self, conn, filter_query, filter_params, single):
         query = f"""
-        select *
-        from [user].[vw_Role]
+        SELECT handler_id,
+        league_number,
+        handler_name,
+        handler_email,
+        handler_role,
+        is_handler_active
+        from [handler].[handler]
         where 1 = 1 {filter_query};
         """
         parameters = filter_params
@@ -23,12 +28,12 @@ class UserRepository:
 
     def toggle_user_active(self, conn, UserId, IsUserActive):
         query = """
-        UPDATE [user].[User]
-        SET [IsUserActive] = :IsUserActive
+        UPDATE [handler].[handler]
+        SET [is_handler_active] = :is_handler_active
         OUTPUT [inserted].*
         WHERE [UserId] = :UserId
         """
-        params = {"UserId": UserId, "IsUserActive": IsUserActive}
+        params = {"UserId": UserId, "is_handler_active": IsUserActive}
         result_df = db.read_df(conn, query, params)
         return result_df
 
@@ -42,32 +47,31 @@ class UserRepository:
         result_df = db.read_df(conn, query, parameters, single=single)
         return result_df
 
-    def post_user_profile(self, conn, u: UserProfileModel):
+    def post_handler(self, conn, u):
         query = """
-        WITH [Source] AS (SELECT :UserName AS [UserName],
-                                :UserDisplayName as [UserDisplayName] ,
-                                :UserEmail as [UserEmail],
-                                :UserTitle as [UserTitle],
-                                :UserDepartment as [UserDepartment],
-                                :UserCompany as [UserCompany],
-                                1 as [IsUserActive])
-            MERGE [user].[User] AS [Target]
-        USING [Source]
-        ON [Target].[UserName] = :UserName
-        WHEN MATCHED THEN
-            UPDATE
-            SET [UserDisplayName] = :UserDisplayName,
-                [UserEmail]       = :UserEmail,
-                [UserTitle]       = :UserTitle,
-                [UserDepartment]  = :UserDepartment,
-                [UserCompany]     = :UserCompany,
-                [IsUserActive]    = 1
-        WHEN NOT MATCHED THEN
-            INSERT ([UserName], [UserDisplayName], [UserEmail], [UserTitle], [UserDepartment],
-                    [UserCompany], [IsUserActive])
-            VALUES (:UserName, :UserDisplayName, :UserEmail, :UserTitle, :UserDepartment, :UserCompany, 1)
-        OUTPUT [inserted].*,
-            IIF($ACTION = 'INSERT', 1, 0) AS [IsUserNew];
+        INSERT INTO handler.handler (
+            handler_id,
+            league_number,
+            handler_name,
+            handler_email,
+            handler_role,
+            is_handler_active
+        )
+        VALUES (
+            :handler_id,
+            :league_number,
+            :handler_name,
+            :handler_email,
+            :handler_role,
+            TRUE
+        )
+        RETURNING 
+            handler_id::text as handler_id,
+            league_number,
+            handler_name,
+            handler_email,
+            handler_role,
+            is_handler_active;
         """
         res = db.read_df(conn, query, u.model_dump(), single=True)
         return res
@@ -149,7 +153,7 @@ class UserRepository:
         result_df = db.read_df(conn, query, {"UserId": UserId}, single=True)
         return result_df
 
-    def post_user_setting(self, conn, u: UserSettingModel):
+    def post_user_setting(self, conn, u: HandlerModel):
         query = """
         UPDATE [US] WITH (UPDLOCK, SERIALIZABLE)
         SET [Settings] = :Settings
@@ -170,4 +174,4 @@ class UserRepository:
         return u
 
 
-UserRepositoryDep = Annotated[UserRepository, Depends()]
+HandlerRepositoryDep = Annotated[HandlerRepository, Depends()]

@@ -45,10 +45,24 @@ class DogRepository:
     def post_new_dog(self, conn, d: DogModel):
         query = """
         INSERT INTO dog.dog (league_number, dog_name, main_handler_id, alternate_handler_id, call_name, breed, height,
-                     jump_height, current_level_type_id, is_reactive, people, dogs, is_virtual, is_dog_active)
-        OUTPUT [inserted].*
-        VALUES (:league_number, :dog_name, :main_handler_id, :alternate_handler_id, :call_name, breed, :height,
-                     :jump_height, :current_level_type_id, :is_reactive, :people, :dogs, :is_virtual, :is_dog_active);
+                            jump_height, current_level_type_id, is_reactive, people, dogs, is_virtual, is_dog_active)
+        VALUES (:league_number, :dog_name, :main_handler_id, :alternate_handler_id, :call_name, :breed, :height,
+                            :jump_height, :current_level_type_id, :is_reactive, :people, :dogs, :is_virtual, :is_dog_active)
+        RETURNING 
+            league_number,
+            dog_name,
+            main_handler_id::text as main_handler_id,
+            alternate_handler_id::text as alternate_handler_id,
+            call_name,
+            breed,
+            height,
+            jump_height,
+            current_level_type_id::text as current_level_type_id,
+            is_reactive,
+            people,
+            dogs,
+            is_virtual,
+            is_dog_active;
         """
         res = db.read_df(
             conn,

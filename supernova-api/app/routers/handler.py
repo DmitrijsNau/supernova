@@ -22,9 +22,9 @@ def get_user_profile(request: Request, service: HandlerServiceDep, single=False)
     return service.get_user_profile(request, single)
 
 
-@router.post("/user-profile")
-def post_user_profile(u: HandlerModel, service: HandlerServiceDep):
-    return service.post_user_profile(u)
+@router.post("/")
+def post_handler(u: HandlerModel, service: HandlerServiceDep):
+    return service.post_handler(u)
 
 
 @router.get("/user-role")

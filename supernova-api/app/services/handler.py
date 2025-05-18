@@ -1,11 +1,9 @@
-import json
-
 from typing import Annotated
 from fastapi import Depends
 
 import app.core.database as db
 from app.core.query_parser import QueryParser
-from app.repositories.user import UserRepositoryDep
+from app.repositories.handler import HandlerRepositoryDep
 from app.models.handler import HandlerModel
 
 query_parser = QueryParser(
@@ -28,7 +26,7 @@ query_parser = QueryParser(
 class HandlerService:
     def __init__(
         self,
-        repository: UserRepositoryDep,
+        repository: HandlerRepositoryDep,
         conn: db.LConnectionMainDep,
     ):
         self.repo = repository
@@ -55,23 +53,9 @@ class HandlerService:
             )
             return db.df_to_json(result_df)
 
-    def post_user_profile(self, u):
+    def post_handler(self, u):
         with db.begin_transaction_if_not_in_transaction(self.conn):
-            user = self.repo.post_user_profile(self.conn, u)
-            # when we have a new user, lets give them default user roles and settings
-            if user["IsUserNew"]:
-                self.repo.add_default_user_role(self.conn, user["UserId"])
-
-                default_settings = self.repo.get_default_user_setting_for_user(
-                    self.conn, user["UserId"]
-                )
-                self.repo.post_user_setting(
-                    self.conn,
-                    UserSettingModel(
-                        UserId=user["UserId"], Settings=default_settings["Settings"]
-                    ),
-                )
-
+            user = self.repo.post_handler(self.conn, u)
             return db.df_to_json(user)
 
     def get_user_role(self, request, single):
@@ -82,7 +66,7 @@ class HandlerService:
             )
             return db.df_to_json(result_df)
 
-    def put_user_role(self, urm: UserRoleModel):
+    def put_user_role(self, urm: HandlerModel):
         with self.conn.begin():
             user_role_dicts = list(
                 map(lambda x: {"UserId": urm.UserId, "RoleCode": x}, urm.RoleCodes)
@@ -96,17 +80,6 @@ class HandlerService:
                 self.conn, query_object["query"], query_object["params"]
             )
             return db.df_to_json(result_df)
-
-    def get_user_setting(self, request, single):
-        query_object = query_parser(request)
-        result_df = self.repo.get_user_setting(
-            self.conn, query_object["query"], query_object["params"], single
-        )
-        return db.df_to_json(db.df_with_column_to_json(result_df, "Settings"))
-
-    def post_user_setting(self, u):
-        with self.conn.begin():
-            return self.repo.post_user_setting(self.conn, u)
 
 
 HandlerServiceDep = Annotated[HandlerService, Depends()]
