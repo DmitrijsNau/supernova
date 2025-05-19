@@ -19,7 +19,7 @@ app: FastAPI = FastAPI(default_response_class=ORJSONResponse)
 
 # cors
 origins = [
-    "http://localhost:3000",
+    "http://localhost:9000",
 ]
 
 app.add_middleware(
@@ -68,9 +68,7 @@ async def error_exception_handler(request: Request, exc: Exception):
 
         # If we only allow specific origins, then we have to mirror back
         # the Origin header in the response.
-        elif not cors.allow_all_origins and cors.is_allowed_origin(
-            origin=origin
-        ):
+        elif not cors.allow_all_origins and cors.is_allowed_origin(origin=origin):
             response.headers["Access-Control-Allow-Origin"] = origin
             response.headers.add_vary_header("Origin")
 
