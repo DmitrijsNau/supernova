@@ -1,25 +1,62 @@
+
 <template>
   <q-page>
     <q-card v-if="dogs.length > 0" class="my-card" flat bordered>
       <q-card-section>
         <div class="text-h6">Dogs List</div>
       </q-card-section>
-
       <q-card-section>
         <q-table
           :rows="dogs"
           :columns="tableColumns"
           row-key="id"
           :loading="loading"
-        />
+        >
+          <!-- Custom slot for main_handler_id -->
+          <template v-slot:body-cell-main_handler_id="props">
+            <q-td :props="props">
+              <UtilCustomDisplayCard
+                :id="props.value"
+                icon="person"
+                api-route="/handler/user-profile"
+                :param-name="'handler_id'"
+                :keys-to-display="['handler_name']"
+              />
+            </q-td>
+          </template>
+
+          <!-- Custom slot for alternate_handler_id -->
+          <template v-slot:body-cell-alternate_handler_id="props">
+            <q-td :props="props">
+              <UtilCustomDisplayCard
+                :id="props.value"
+                icon="person"
+                api-route="/handler/user-profile"
+                :param-name="'handler_id'"
+                :keys-to-display="['handler_name']"
+              />
+            </q-td>
+          </template>
+
+          <!-- Custom slot for current_level_type_id -->
+          <template v-slot:body-cell-current_level_type_id="props">
+            <q-td :props="props">
+              <UtilCustomDisplayCard
+                :id="props.value"
+                icon="school"
+                api-route="/level-type"
+                :param-name="'level_type_id'"
+                :keys-to-display="['name', 'description']"
+              />
+            </q-td>
+          </template>
+        </q-table>
       </q-card-section>
     </q-card>
-
     <div v-else-if="loading" class="flex flex-center q-pa-lg">
       <q-spinner size="48px" color="primary" />
       <div class="q-ml-md">Loading dogs data...</div>
     </div>
-
     <q-card v-else class="my-card" flat bordered>
       <q-card-section>
         <div class="text-h6">No Data Available</div>
@@ -30,12 +67,16 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref } from 'vue'
 import { useTableColumns } from '@/composables/useTableColumns'
 import { api } from '@/boot/axios'
 import { useQuasar } from 'quasar'
+import UtilCustomDisplayCard from '@/components/Util/UtilCustomDisplayCard.vue'
 
 export default {
+  components: {
+    UtilCustomDisplayCard // Make sure to register the component here
+  },
   setup() {
     const q = useQuasar()
     return {

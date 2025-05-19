@@ -18,8 +18,8 @@ def get_role(request: Request, service: HandlerServiceDep, single=False):
 
 
 @router.get("/user-profile")
-def get_user_profile(request: Request, service: HandlerServiceDep, single=False):
-    return service.get_user_profile(request, single)
+def get_handler(request: Request, service: HandlerServiceDep, single=False):
+    return service.get_handler(request, single)
 
 
 @router.post("/")

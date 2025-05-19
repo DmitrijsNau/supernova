@@ -45,10 +45,10 @@ class HandlerService:
             result_df = self.repo.toggle_user_active(self.conn, UserId, isUserActive)
             return db.df_to_json(result_df)
 
-    def get_user_profile(self, request, single):
+    def get_handler(self, request, single):
         query_object = query_parser(request)
         with self.conn.begin():
-            result_df = self.repo.get_user_profile(
+            result_df = self.repo.get_handler(
                 self.conn, query_object["query"], query_object["params"], single
             )
             return db.df_to_json(result_df)

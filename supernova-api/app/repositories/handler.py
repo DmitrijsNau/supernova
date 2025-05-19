@@ -13,13 +13,13 @@ class HandlerRepository:
 
     def get_handler(self, conn, filter_query, filter_params, single):
         query = f"""
-        SELECT handler_id,
+        SELECT handler_id::text as handler_id,
         league_number,
         handler_name,
         handler_email,
         handler_role,
         is_handler_active
-        from [handler].[handler]
+        from handler.handler
         where 1 = 1 {filter_query};
         """
         parameters = filter_params
@@ -35,16 +35,6 @@ class HandlerRepository:
         """
         params = {"UserId": UserId, "is_handler_active": IsUserActive}
         result_df = db.read_df(conn, query, params)
-        return result_df
-
-    def get_user_profile(self, conn, filter_query, filter_params, single):
-        query = f"""
-        select *
-        from [user].[vw_User]
-        where 1 = 1 {filter_query};
-        """
-        parameters = filter_params
-        result_df = db.read_df(conn, query, parameters, single=single)
         return result_df
 
     def post_handler(self, conn, u):

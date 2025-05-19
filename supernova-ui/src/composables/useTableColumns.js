@@ -12,7 +12,7 @@ export function useTableColumns(dataSource, options = {}) {
 
   // Default formatter that converts snake_case to Title Case
   function defaultFormatter(fieldName) {
-    const spaceCase = fieldName.replace(/_/g, " ")
+    const spaceCase = fieldName.replace(/_/g, " ").replace("id", "")
     return spaceCase.split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
